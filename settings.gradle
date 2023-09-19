@@ -1,0 +1,3 @@
+rootProject.name = 'multi_module'
+include 'monitor'
+include 'server'
