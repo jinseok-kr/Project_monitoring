@@ -2,18 +2,34 @@ plugins {
     id 'java'
 }
 
-group 'com.multi'
-version '1.0-SNAPSHOT'
+subprojects {
+    apply plugin: 'java'
 
-repositories {
-    mavenCentral()
+    group 'com.multi'
+    version '1.0-SNAPSHOT'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    }
+
+    test {
+        useJUnitPlatform()
+    }
 }
 
-dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+project(':monitor') { // 컴파일 시 multi-module-database 로딩
+    dependencies {
+        implementation project(':core')
+    }
 }
 
-test {
-    useJUnitPlatform()
+project(':server') { // 컴파일 시 multi-module-database 로딩
+    dependencies {
+        implementation project(':core')
+    }
 }
