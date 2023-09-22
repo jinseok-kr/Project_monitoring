@@ -8,6 +8,10 @@ subprojects {
     group 'com.multi'
     version '1.0-SNAPSHOT'
 
+    java {
+        sourceCompatibility = '17'
+    }
+
     repositories {
         mavenCentral()
     }
@@ -17,7 +21,7 @@ subprojects {
         testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
     }
 
-    test {
+    tasks.named('test') {
         useJUnitPlatform()
     }
 }
