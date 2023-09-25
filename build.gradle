@@ -17,9 +17,10 @@ subprojects {
     }
 
     dependencies {
+        implementation 'org.projectlombok:lombok:1.18.24'
+        annotationProcessor 'org.projectlombok:lombok:1.18.24'
         testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
         testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
-        implementation 'org.projectlombok:lombok'
     }
 
     tasks.named('test') {
@@ -27,13 +28,13 @@ subprojects {
     }
 }
 
-project(':monitor') { // 컴파일 시 multi-module-database 로딩
+project(':monitor') {
     dependencies {
         implementation project(':core')
     }
 }
 
-project(':server') { // 컴파일 시 multi-module-database 로딩
+project(':server') {
     dependencies {
         implementation project(':core')
     }

@@ -15,6 +15,13 @@ public class RegistAgentRequestDTO {
 
     private String os;
 
+    public RegistAgentRequestDTO(String agentIp, String core, String memory, String os) {
+        this.agentIp = agentIp;
+        this.core = core;
+        this.memory = memory;
+        this.os = os;
+    }
+
     public Agent toEntity() {
         return Agent.builder()
                 .agentIp(agentIp)
