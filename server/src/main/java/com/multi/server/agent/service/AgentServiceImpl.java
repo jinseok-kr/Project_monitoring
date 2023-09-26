@@ -36,20 +36,20 @@ public class AgentServiceImpl implements AgentService{
         String[] result = null;
         try {
             XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
-            config.setServerURL(new URL("http://" + agentIp + ":" + String.valueOf(port) + "/xmlrpc"));
+            config.setServerURL(new URL("http://" + agentIp + ":" + port + "/xmlrpc"));
             config.setEnabledForExtensions(true);
             config.setConnectionTimeout(60 * 1000);
             config.setReplyTimeout(60 * 1000);
 
             XmlRpcClient client = new XmlRpcClient();
-
             // use Commons HttpClient as transport
-            client.setTransportFactory(
-                    new XmlRpcCommonsTransportFactory(client));
+            client.setTransportFactory(new XmlRpcCommonsTransportFactory(client));
             // set configuration
             client.setConfig(config);
             result = (String[]) client.execute("MonitorServiceImpl.getRegistInfo", new Object[0]);
-        } catch (MalformedURLException | XmlRpcException e) {
+        } catch (MalformedURLException e) {
+            System.out.println("URL 생성 실패");
+        } catch (XmlRpcException e) {
             System.out.println("등록 요청 실패");
         }
         return result;

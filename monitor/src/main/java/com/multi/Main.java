@@ -18,13 +18,6 @@ public class Main {
 
         PropertyHandlerMapping phm = new PropertyHandlerMapping();
 
-        /* You may also provide the handler classes directly,
-         * like this:
-         * phm.addHandler("Calculator",
-         *     org.apache.xmlrpc.demo.Calculator.class);
-         * phm.addHandler(org.apache.xmlrpc.demo.proxy.Adder.class.getName(),
-         *     org.apache.xmlrpc.demo.proxy.AdderImpl.class);
-         */
         phm.addHandler(MonitorService.class.getName(), MonitorServiceImpl.class);
         xmlRpcServer.setHandlerMapping(phm);
 
