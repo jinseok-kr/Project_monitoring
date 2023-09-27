@@ -1,0 +1,6 @@
+logging:
+  pattern:
+    console: "[%d{yyyy-MM-dd HH:mm:ss.SSS, GMT+9}][%thread][%-5level][%marker]\\(%F:%L\\): %m%n"
+  level:
+    org:
+      springframework: INFO

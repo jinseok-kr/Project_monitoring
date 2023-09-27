@@ -1,6 +1,7 @@
 package com.multi.server.agent.controller;
 
 
+import com.multi.dto.AgentInfoDTO;
 import com.multi.server.agent.dto.RegistAgentRequestDTO;
 import com.multi.server.agent.service.AgentService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,9 +17,15 @@ public class AgentController {
 
     @GetMapping("/alive/{ip}")
     public ResponseEntity registRequest(@PathVariable String ip) { //ip를 받아서 에이전트 서버에 등록요청
-        String[] agentInfo = agentService.callAgent(ip);
-        if (agentInfo == null) return ResponseEntity.badRequest().body("등록 요청 실패");
-        RegistAgentRequestDTO dto = new RegistAgentRequestDTO(ip, agentInfo[0], agentInfo[1], agentInfo[2]);
+        AgentInfoDTO agentInfo = agentService.callAgent(ip);
+        if (agentInfo == null)
+            return ResponseEntity.badRequest().body("등록 요청 실패");
+        RegistAgentRequestDTO dto = RegistAgentRequestDTO.builder()
+                .agentIp(ip)
+                .cpuCores(agentInfo.cpuCores())
+                .memorySize(agentInfo.memorySize())
+                .osInfo(agentInfo.osInfo())
+                .build();
         agentService.registAgent(dto);
         return ResponseEntity.ok(dto);
     }
