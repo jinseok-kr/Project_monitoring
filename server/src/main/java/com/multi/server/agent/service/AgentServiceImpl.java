@@ -1,26 +1,29 @@
 package com.multi.server.agent.service;
 
-import com.multi.dto.AgentInfoDTO;
 import com.multi.server.agent.dto.RegistAgentRequestDTO;
 import com.multi.server.agent.entity.Agent;
+import com.multi.server.agent.exception.AgentRegistFailException;
+import com.multi.server.agent.exception.URLCreateFailException;
 import com.multi.server.agent.repository.AgentRepository;
+import com.multi.dto.AgentInfoDTO;
+import com.multi.service.MonitorService;
 import lombok.RequiredArgsConstructor;
-import org.apache.xmlrpc.XmlRpcException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 import org.apache.xmlrpc.client.XmlRpcCommonsTransportFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.xmlrpc.client.util.ClientFactory;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.UndeclaredThrowableException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class AgentServiceImpl implements AgentService{
     private static final int port = 8080;
-    private static final Logger logger = LoggerFactory.getLogger(AgentServiceImpl.class);
     private final AgentRepository agentRepository;
 
     @Override
@@ -49,11 +52,19 @@ public class AgentServiceImpl implements AgentService{
             client.setTransportFactory(new XmlRpcCommonsTransportFactory(client));
             // set configuration
             client.setConfig(config);
-            result = (AgentInfoDTO) client.execute("MonitorServiceImpl.getRegistInfo", new Object[0]);
+            ClientFactory factory = new ClientFactory(client);
+            MonitorService monitorService = (MonitorService) factory.newInstance(MonitorService.class);
+            result = monitorService.getRegistInfo();
+            if (result == null) {
+                log.error("에이전트 등록 요청 실패");
+                throw new AgentRegistFailException();
+            }
         } catch (MalformedURLException e) {
-            logger.info("URL 생성 실패");
-        } catch (XmlRpcException e) {
-            logger.info("등록 요청 실패");
+            log.warn("URL 생성 실패");
+            throw new URLCreateFailException();
+        } catch (UndeclaredThrowableException e) {
+            log.warn("에이전트 등록 요청 실패");
+            throw new AgentRegistFailException();
         }
         return result;
     }
