@@ -9,6 +9,7 @@ import com.multi.dto.AgentInfoDTO;
 import com.multi.service.MonitorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 import org.apache.xmlrpc.client.XmlRpcCommonsTransportFactory;
@@ -22,7 +23,7 @@ import java.net.URL;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class AgentServiceImpl implements AgentService{
+public class AgentServiceImpl implements AgentService {
     private static final int port = 8080;
     private final AgentRepository agentRepository;
 
@@ -33,7 +34,7 @@ public class AgentServiceImpl implements AgentService{
     }
 
     @Override
-    public AgentInfoDTO callAgent(String agentIp){
+    public AgentInfoDTO callAgent(String agentIp) {
         //등록 요청 보내기
         // 1. 컴퓨터가 살아있는가
         // 2. agent 서비스가 켜져있는가

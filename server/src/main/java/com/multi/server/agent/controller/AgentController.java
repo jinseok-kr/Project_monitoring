@@ -8,17 +8,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/agent")
 public class AgentController {
     private final AgentService agentService;
 
-    @GetMapping("/alive/{ip}")
-    public ResponseEntity registRequest(@PathVariable String ip) { //ip를 받아서 에이전트 서버에 등록요청
-        AgentInfoDTO agentInfo = agentService.callAgent(ip);
+    @PostMapping("/regist")
+    public ResponseEntity registRequest(@RequestBody Map<String, String> agentIpMap) { //ip를 받아서 에이전트 서버에 등록요청
+        AgentInfoDTO agentInfo = agentService.callAgent(agentIpMap.get("agentIp"));
         RegistAgentRequestDTO dto = RegistAgentRequestDTO.builder()
-                .agentIp(ip)
+                .agentIp(agentIpMap.get("agentIp"))
                 .cpuCores(agentInfo.cpuCores())
                 .memorySize(agentInfo.memorySize())
                 .osInfo(agentInfo.osInfo())

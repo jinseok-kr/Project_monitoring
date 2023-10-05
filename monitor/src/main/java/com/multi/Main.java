@@ -24,7 +24,7 @@ public class Main {
             Map<String, Object> propMap = new Yaml().load(new FileReader("core/src/main/resources/application.yml"));
             port = (int) propMap.get("server.port");
         } catch (FileNotFoundException e) {
-            log.info("포트번호 가져오기 실패");
+            log.error("포트번호 가져오기 실패");
             throw new NoPortException("monitor : 포트번호 가져오기 실패");
         }
 
