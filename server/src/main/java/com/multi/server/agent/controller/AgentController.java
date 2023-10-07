@@ -1,6 +1,7 @@
 package com.multi.server.agent.controller;
 
 
+import com.multi.server.agent.dto.AgentIpDTO;
 import com.multi.server.agent.dto.RegistAgentRequestDTO;
 import com.multi.server.agent.service.AgentService;
 import com.multi.dto.AgentInfoDTO;
@@ -17,10 +18,10 @@ public class AgentController {
     private final AgentService agentService;
 
     @PostMapping("/regist")
-    public ResponseEntity registRequest(@RequestBody Map<String, String> agentIpMap) { //ip를 받아서 에이전트 서버에 등록요청
-        AgentInfoDTO agentInfo = agentService.callAgent(agentIpMap.get("agentIp"));
+    public ResponseEntity registRequest(@RequestBody AgentIpDTO agentIpDTO) { //ip를 받아서 에이전트 서버에 등록요청
+        AgentInfoDTO agentInfo = agentService.callAgent(agentIpDTO.agentIp());
         RegistAgentRequestDTO dto = RegistAgentRequestDTO.builder()
-                .agentIp(agentIpMap.get("agentIp"))
+                .agentIp(agentIpDTO.agentIp())
                 .cpuCores(agentInfo.cpuCores())
                 .memorySize(agentInfo.memorySize())
                 .osInfo(agentInfo.osInfo())
