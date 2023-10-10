@@ -1,26 +1,16 @@
 package com.multi.server.agent.dto;
 
 import com.multi.server.agent.entity.Agent;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Builder;
 
-@Getter
-@Setter
-public class RegistAgentRequestDTO {
-    private String agentIp;
-
-    private String core;
-
-    private String memory;
-
-    private String os;
-
+@Builder
+public record RegistAgentRequestDTO (String agentIp, int cpuCores, long memorySize, String osInfo) {
     public Agent toEntity() {
         return Agent.builder()
                 .agentIp(agentIp)
-                .core(core)
-                .memory(memory)
-                .os(os)
+                .cpuCores(cpuCores)
+                .memorySize(memorySize)
+                .osInfo(osInfo)
                 .build();
     }
 }

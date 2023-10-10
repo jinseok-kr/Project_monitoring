@@ -16,20 +16,20 @@ public class Agent {
     @Column(name = "agent_ip")
     private String agentIp;
 
-    @Column(name = "core")
-    private String core;
+    @Column(name = "cpu_cores")
+    private int cpuCores;
 
-    @Column(name = "memory")
-    private String memory;
+    @Column(name = "memory_size")
+    private long memorySize;
 
-    @Column(name = "os")
-    private String os;
+    @Column(name = "os_info")
+    private String osInfo;
 
     @Builder
-    public Agent(String agentIp, String core, String memory, String os) {
+    public Agent(String agentIp, int cpuCores, long memorySize, String osInfo) {
         this.agentIp = agentIp;
-        this.core = core;
-        this.memory = memory;
-        this.os = os;
+        this.cpuCores = cpuCores;
+        this.memorySize = memorySize;
+        this.osInfo = osInfo;
     }
 }
