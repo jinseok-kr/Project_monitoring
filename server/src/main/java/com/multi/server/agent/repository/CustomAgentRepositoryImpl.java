@@ -40,12 +40,12 @@ public class CustomAgentRepositoryImpl implements CustomAgentRepository {
         return StringUtils.isNullOrEmpty(agentIp) ? null : agent.agentIp.eq(agentIp);
     }
 
-    private BooleanExpression eqCpuCores(int cpuCores) {
-        return cpuCores == 0 ? null : agent.cpuCores.eq(cpuCores);
+    private BooleanExpression eqCpuCores(Integer cpuCores) {
+        return cpuCores == null ? null : agent.cpuCores.eq(cpuCores);
     }
 
-    private BooleanExpression eqMemorySize(long memorySize) {
-        return memorySize == 0 ? null : agent.memorySize.eq(memorySize);
+    private BooleanExpression eqMemorySize(Long memorySize) {
+        return memorySize == null ? null : agent.memorySize.eq(memorySize);
     }
 
     private BooleanExpression containsOsInfo(String osInfo) {

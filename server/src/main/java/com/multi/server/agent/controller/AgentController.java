@@ -33,8 +33,8 @@ public class AgentController {
 
     @GetMapping("/search")
     public ResponseEntity<List<AgentDTO>> searchAgents(@RequestParam(required = false) String agentIp,
-                                       @RequestParam(required = false) int cpuCores,
-                                       @RequestParam(required = false) long memorySize,
+                                       @RequestParam(required = false) Integer cpuCores,
+                                       @RequestParam(required = false) Long memorySize,
                                        @RequestParam(required = false) String osInfo) {
         List<AgentDTO> agents = agentService.getAgentsList(new AgentDTO(agentIp, cpuCores, memorySize, osInfo));
         return ResponseEntity.ok(agents);
