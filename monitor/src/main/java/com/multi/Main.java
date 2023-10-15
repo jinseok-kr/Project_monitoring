@@ -22,7 +22,7 @@ public class Main {
         int port = -1;
         try {
             Map<String, Object> propMap = new Yaml().load(new FileReader("core/src/main/resources/application.yml"));
-            port = (int) propMap.get("server.port");
+            port = (int) ((Map<String, Object>)propMap.get("server")).get("port");
         } catch (FileNotFoundException e) {
             log.error("포트번호 가져오기 실패");
             throw new NoPortException("monitor : 포트번호 가져오기 실패");
