@@ -2,6 +2,7 @@ package com.multi.server.agent.service;
 
 import com.multi.dto.AgentInfoDTO;
 import com.multi.server.agent.dto.AgentDTO;
+import com.multi.server.agent.dto.AgentsSearchDTO;
 
 import java.util.List;
 
@@ -10,5 +11,5 @@ public interface AgentService {
 
     AgentInfoDTO callAgent(String agentIp);
 
-    List<AgentDTO> getAgentsList(AgentDTO agentDTO);
+    List<AgentDTO> getAgentsList(AgentsSearchDTO agentsSearchDTO);
 }

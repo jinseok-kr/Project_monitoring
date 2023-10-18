@@ -3,6 +3,7 @@ package com.multi.server.agent.controller;
 
 import com.multi.server.agent.dto.AgentDTO;
 import com.multi.server.agent.dto.AgentIpDTO;
+import com.multi.server.agent.dto.AgentsSearchDTO;
 import com.multi.server.agent.service.AgentService;
 import com.multi.dto.AgentInfoDTO;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -32,19 +32,8 @@ public class AgentController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<AgentDTO>> searchAgents(@RequestParam(required = false) String agentIp,
-                                       @RequestParam(required = false) Integer cpuCores,
-                                       @RequestParam(required = false) Long memorySize,
-                                       @RequestParam(required = false) String osInfo) {
-        List<AgentDTO> agents = agentService.getAgentsList(new AgentDTO(agentIp, cpuCores, memorySize, osInfo));
+    public ResponseEntity<List<AgentDTO>> searchAgents(@ModelAttribute AgentsSearchDTO agentsSearchDTO) {
+        List<AgentDTO> agents = agentService.getAgentsList(agentsSearchDTO);
         return ResponseEntity.ok(agents);
     }
-
-//    @PostMapping("/regist") //에이전트가 보내온 정보를 DB에 등록
-//    public ResponseEntity<RegistAgentRequestDTO> regist(@RequestBody RegistAgentRequestDTO dto) {
-//
-//        agentService.registAgent(dto);
-//        return ResponseEntity.ok()
-//                .body(dto);
-//    }
 }

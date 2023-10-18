@@ -3,6 +3,7 @@ package com.multi.server.agent.repository;
 import static com.multi.server.agent.entity.QAgent.agent;
 
 import com.multi.server.agent.dto.AgentDTO;
+import com.multi.server.agent.dto.AgentsSearchDTO;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.util.StringUtils;
@@ -18,7 +19,7 @@ public class CustomAgentRepositoryImpl implements CustomAgentRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<AgentDTO> findAgentsByFilter(AgentDTO agentDTO) {
+    public List<AgentDTO> findAgentsByFilter(AgentsSearchDTO agentsSearchDTO) {
         return queryFactory
                 .select(Projections.constructor(AgentDTO.class,
                         agent.agentIp,
@@ -28,10 +29,10 @@ public class CustomAgentRepositoryImpl implements CustomAgentRepository {
                 ))
                 .from(agent)
                 .where(
-                        eqAgentIp(agentDTO.agentIp()),
-                        eqCpuCores(agentDTO.cpuCores()),
-                        eqMemorySize(agentDTO.memorySize()),
-                        containsOsInfo(agentDTO.osInfo())
+                        eqAgentIp(agentsSearchDTO.agentIp()),
+                        eqCpuCores(agentsSearchDTO.cpuCores()),
+                        eqMemorySize(agentsSearchDTO.memorySize()),
+                        containsOsInfo(agentsSearchDTO.osInfo())
 
                 ).fetch();
     }

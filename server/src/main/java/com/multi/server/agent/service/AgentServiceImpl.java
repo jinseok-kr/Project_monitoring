@@ -1,6 +1,8 @@
 package com.multi.server.agent.service;
 
+import com.multi.server.agent.config.ConfigProperties;
 import com.multi.server.agent.dto.AgentDTO;
+import com.multi.server.agent.dto.AgentsSearchDTO;
 import com.multi.server.agent.entity.Agent;
 import com.multi.server.agent.exception.AgentRegistFailException;
 import com.multi.server.agent.exception.URLCreateFailException;
@@ -13,6 +15,7 @@ import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 import org.apache.xmlrpc.client.XmlRpcCommonsTransportFactory;
 import org.apache.xmlrpc.client.util.ClientFactory;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.UndeclaredThrowableException;
@@ -23,8 +26,10 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @Service
+@EnableConfigurationProperties(ConfigProperties.class)
 public class AgentServiceImpl implements AgentService {
-    private static final int port = 8080;
+
+    private final ConfigProperties configProperties;
     private final AgentRepository agentRepository;
 
     //에이전트 DB 등록
@@ -32,6 +37,7 @@ public class AgentServiceImpl implements AgentService {
     public void registAgent(AgentDTO agentDTO) {
         Agent agent = agentDTO.toEntity();
         agent = agentRepository.save(agent);
+        log.info("에이전트 정보 DB 저장");
     }
 
     //에이전트 등록 요청
@@ -40,7 +46,7 @@ public class AgentServiceImpl implements AgentService {
         AgentInfoDTO result = null;
         try {
             XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
-            config.setServerURL(new URL(String.format("http://%s:%d/xmlrpc",agentIp, port)));
+            config.setServerURL(new URL(String.format("http://%s:%d/xmlrpc",agentIp, configProperties.getPort())));
             config.setEnabledForExtensions(true);
             config.setConnectionTimeout(60 * 1000);
             config.setReplyTimeout(60 * 1000);
@@ -64,12 +70,14 @@ public class AgentServiceImpl implements AgentService {
             log.warn("에이전트 등록 요청 실패");
             throw new AgentRegistFailException();
         }
+        log.info("에이전트 등록 요청 성공");
         return result;
     }
 
     //에이전트 목록 조회
     @Override
-    public List<AgentDTO> getAgentsList(AgentDTO agentDTO) {
-        return agentRepository.findAgentsByFilter(agentDTO);
+    public List<AgentDTO> getAgentsList(AgentsSearchDTO agentsSearchDTO) {
+        log.info("에이전트 목록 검색");
+        return agentRepository.findAgentsByFilter(agentsSearchDTO);
     }
 }
