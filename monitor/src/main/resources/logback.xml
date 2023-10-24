@@ -1,10 +1,11 @@
 <configuration scan="true" scanPeriod="30 seconds" debug="false">
-    <property name="LOG_PATTERN" value="[%d{yyyy-MM-dd HH:mm:ss.SSS, GMT+9}][%thread][%-5level][%marker]\\(%F:%L\\): %m%n" />
+    <property name="LOG_PATTERN" value="[%d{yyyy-MM-dd HH:mm:ss.SSS, GMT+9}][%thread][%-5level]%F:%L: %msg%n" />
 
     <!-- 콘솔 출력 -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <!-- 로그 출력 패턴 -->
+            <charset>UTF-8</charset>
             <pattern>${LOG_PATTERN}</pattern>
         </encoder>
     </appender>

@@ -1,15 +1,16 @@
 package com.multi.server.agent.controller;
 
 
+import com.multi.server.agent.dto.AgentDTO;
 import com.multi.server.agent.dto.AgentIpDTO;
-import com.multi.server.agent.dto.RegistAgentRequestDTO;
+import com.multi.server.agent.dto.AgentsSearchDTO;
 import com.multi.server.agent.service.AgentService;
 import com.multi.dto.AgentInfoDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -20,7 +21,7 @@ public class AgentController {
     @PostMapping("/regist")
     public ResponseEntity registRequest(@RequestBody AgentIpDTO agentIpDTO) { //ip를 받아서 에이전트 서버에 등록요청
         AgentInfoDTO agentInfo = agentService.callAgent(agentIpDTO.agentIp());
-        RegistAgentRequestDTO dto = RegistAgentRequestDTO.builder()
+        AgentDTO dto = AgentDTO.builder()
                 .agentIp(agentIpDTO.agentIp())
                 .cpuCores(agentInfo.cpuCores())
                 .memorySize(agentInfo.memorySize())
@@ -30,11 +31,9 @@ public class AgentController {
         return ResponseEntity.ok(dto);
     }
 
-//    @PostMapping("/regist") //에이전트가 보내온 정보를 DB에 등록
-//    public ResponseEntity<RegistAgentRequestDTO> regist(@RequestBody RegistAgentRequestDTO dto) {
-//
-//        agentService.registAgent(dto);
-//        return ResponseEntity.ok()
-//                .body(dto);
-//    }
+    @GetMapping("/search")
+    public ResponseEntity<List<AgentDTO>> searchAgents(@ModelAttribute AgentsSearchDTO agentsSearchDTO) {
+        List<AgentDTO> agents = agentService.getAgentsList(agentsSearchDTO);
+        return ResponseEntity.ok(agents);
+    }
 }
