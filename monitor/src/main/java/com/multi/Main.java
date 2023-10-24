@@ -27,6 +27,8 @@ public class Main {
         } catch (IOException | NumberFormatException e) {
             log.error("포트번호 가져오기 실패");
             throw new NoPortException("monitor : 포트번호 가져오기 실패");
+        } finally {
+            reader.close();
         }
 
         WebServer webServer = new WebServer(port);
