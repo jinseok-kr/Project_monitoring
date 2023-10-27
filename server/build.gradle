@@ -16,6 +16,14 @@ dependencies {
 	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 }
 
+jar {
+	enabled = false;
+}
+
+bootJar {
+	mainClass = 'com.multi.server.ServerApplication'
+}
+
 /**
  * QueryDSL Build Options
  **/

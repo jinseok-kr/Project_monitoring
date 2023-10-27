@@ -42,3 +42,7 @@ project(':server') {
         implementation project(':core')
     }
 }
+
+jar {
+    enabled = false;
+}

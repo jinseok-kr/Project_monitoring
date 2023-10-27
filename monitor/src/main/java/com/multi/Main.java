@@ -9,8 +9,9 @@ import org.apache.xmlrpc.server.XmlRpcServer;
 import org.apache.xmlrpc.server.XmlRpcServerConfigImpl;
 import org.apache.xmlrpc.webserver.WebServer;
 
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.Properties;
 
 @Slf4j
@@ -19,16 +20,16 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         int port = -1;
-        FileReader reader = new FileReader("core/src/main/resources/application.properties");
+        ClassLoader cl;
+        cl = Thread.currentThread().getContextClassLoader();
+        URL url = cl.getResource("application.properties");
         Properties properties = new Properties();
-        try {
-            properties.load(reader);
+        try (InputStream stream = url.openStream()) {
+            properties.load(stream);
             port = Integer.parseInt(properties.getProperty("server.port"));
         } catch (IOException | NumberFormatException e) {
             log.error("포트번호 가져오기 실패");
             throw new NoPortException("monitor : 포트번호 가져오기 실패");
-        } finally {
-            reader.close();
         }
 
         WebServer webServer = new WebServer(port);
