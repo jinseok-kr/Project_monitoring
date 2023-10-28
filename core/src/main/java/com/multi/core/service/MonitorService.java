@@ -1,6 +1,6 @@
-package com.multi.service;
+package com.multi.core.service;
 
-import com.multi.dto.AgentInfoDTO;
+import com.multi.core.dto.AgentInfoDTO;
 
 public interface MonitorService {
     int getCpuCores();

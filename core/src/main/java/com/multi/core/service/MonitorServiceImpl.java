@@ -1,7 +1,7 @@
-package com.multi.service;
+package com.multi.core.service;
 
 
-import com.multi.dto.AgentInfoDTO;
+import com.multi.core.dto.AgentInfoDTO;
 import com.sun.management.OperatingSystemMXBean;
 
 import java.lang.management.ManagementFactory;
