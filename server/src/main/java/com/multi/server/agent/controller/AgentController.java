@@ -4,11 +4,11 @@ package com.multi.server.agent.controller;
 import com.multi.core.dto.AgentMetricDTO;
 import com.multi.server.agent.dto.AgentDTO;
 import com.multi.server.agent.dto.AgentIpDTO;
-import com.multi.server.agent.dto.AgentMetricRequestDTO;
 import com.multi.server.agent.dto.AgentsSearchDTO;
 import com.multi.server.agent.service.AgentService;
 import com.multi.core.dto.AgentInfoDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +22,9 @@ public class AgentController {
 
     @PostMapping("/regist")
     public ResponseEntity registRequest(@RequestBody AgentIpDTO agentIpDTO) { //ip를 받아서 에이전트 서버에 등록요청
+        if (agentService.findByAgentIp(agentIpDTO.agentIp()).isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 등록된 에이전트");
+        }
         AgentInfoDTO agentInfo = agentService.callAgent(agentIpDTO);
         AgentDTO dto = AgentDTO.builder()
                 .agentIp(agentIpDTO.agentIp())
@@ -34,14 +37,14 @@ public class AgentController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<AgentDTO>> searchAgents(@ModelAttribute AgentsSearchDTO agentsSearchDTO) {
+    public ResponseEntity<List<AgentDTO>> searchAgents(AgentsSearchDTO agentsSearchDTO) {
         List<AgentDTO> agents = agentService.getAgentsList(agentsSearchDTO);
         return ResponseEntity.ok(agents);
     }
 
-    @PostMapping("/metric")
-    public ResponseEntity showMetric(@RequestBody AgentMetricRequestDTO agentMetricRequestDTO) {
-        AgentMetricDTO dto = agentService.getAgentMetric(agentMetricRequestDTO);
+    @GetMapping("/metric/{id}")
+    public ResponseEntity showMetric(@PathVariable("id") Long id) {
+        AgentMetricDTO dto = agentService.getAgentMetric(id);
         return ResponseEntity.ok(dto);
     }
 }

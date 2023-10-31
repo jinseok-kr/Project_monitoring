@@ -4,18 +4,17 @@ import com.multi.core.dto.AgentMetricDTO;
 import com.multi.server.agent.config.ConfigProperties;
 import com.multi.server.agent.dto.AgentDTO;
 import com.multi.server.agent.dto.AgentIpDTO;
-import com.multi.server.agent.dto.AgentMetricRequestDTO;
 import com.multi.server.agent.dto.AgentsSearchDTO;
 import com.multi.server.agent.entity.Agent;
 import com.multi.server.agent.exception.AgentRegistFailException;
 import com.multi.server.agent.exception.GetAgentMetricFailException;
+import com.multi.server.agent.exception.NoAgentException;
 import com.multi.server.agent.exception.URLCreateFailException;
 import com.multi.server.agent.repository.AgentRepository;
 import com.multi.core.dto.AgentInfoDTO;
 import com.multi.core.service.MonitorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 import org.apache.xmlrpc.client.XmlRpcCommonsTransportFactory;
@@ -27,6 +26,7 @@ import java.lang.reflect.UndeclaredThrowableException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -87,11 +87,12 @@ public class AgentServiceImpl implements AgentService {
     }
 
     @Override
-    public AgentMetricDTO getAgentMetric(AgentMetricRequestDTO agentMetricRequestDTO) {
+    public AgentMetricDTO getAgentMetric(Long id) {
         AgentMetricDTO result = null;
+        Agent target = agentRepository.findById(id).orElseThrow(NoAgentException::new);
         try {
             XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
-            config.setServerURL(new URL(String.format("http://%s:%d/xmlrpc",agentMetricRequestDTO.agentIp(), configProperties.getPort())));
+            config.setServerURL(new URL(String.format("http://%s:%d/xmlrpc",target.getAgentIp(), configProperties.getPort())));
             config.setEnabledForExtensions(true);
             config.setConnectionTimeout(60 * 1000);
             config.setReplyTimeout(60 * 1000);
@@ -117,5 +118,10 @@ public class AgentServiceImpl implements AgentService {
         }
         log.info("에이전트 메트릭 정보 가져오기 성공");
         return result;
+    }
+
+    @Override
+    public Optional<Agent> findByAgentIp(String agentIp) {
+        return agentRepository.findByAgentIp(agentIp);
     }
 }

@@ -1,8 +1,6 @@
 package com.multi.server.agent.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Getter
@@ -10,6 +8,10 @@ import lombok.*;
 @Entity(name = "agent")
 public class Agent {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+
     @Column(name = "agent_ip")
     private String agentIp;
 

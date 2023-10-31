@@ -2,6 +2,7 @@ package com.multi.server.agent.advice;
 
 import com.multi.server.agent.exception.AgentRegistFailException;
 import com.multi.server.agent.exception.GetAgentMetricFailException;
+import com.multi.server.agent.exception.NoAgentException;
 import com.multi.server.agent.exception.URLCreateFailException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -22,5 +23,10 @@ public class AgentExceptionAdvice {
     @ExceptionHandler(GetAgentMetricFailException.class)
     protected ResponseEntity getAgentMetricFailException() {
         return ResponseEntity.internalServerError().body("에이전트 메트릭 정보 가져오기 실패");
+    }
+
+    @ExceptionHandler(NoAgentException.class)
+    protected ResponseEntity noAgentException() {
+        return ResponseEntity.internalServerError().body("해당 데이터 없음");
     }
 }
