@@ -8,7 +8,7 @@ import java.lang.management.ManagementFactory;
 
 public class MonitorServiceImpl implements MonitorService {
 
-    private static final long byte2giga = 1024 * 1024 * 1024;
+    private static final double byte2giga = 1024 * 1024 * 1024;
 
     @Override
     public int getCpuCores() {
@@ -18,11 +18,11 @@ public class MonitorServiceImpl implements MonitorService {
     }
 
     @Override
-    public long getMemorySize() {
+    public double getMemorySize() {
         OperatingSystemMXBean osbean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
-        long memorySize = osbean.getTotalMemorySize()/byte2giga;
+        double memorySize = osbean.getTotalMemorySize()/byte2giga;
 
-        return memorySize;
+        return Math.round(memorySize * 100) / 100.0;
     }
 
     @Override

@@ -17,13 +17,13 @@ public class Agent {
     private Integer cpuCores;
 
     @Column(name = "memory_size")
-    private Long memorySize;
+    private Double memorySize;
 
     @Column(name = "os_info")
     private String osInfo;
 
     @Builder
-    public Agent(String agentIp, Integer cpuCores, Long memorySize, String osInfo) {
+    public Agent(String agentIp, Integer cpuCores, Double memorySize, String osInfo) {
         this.agentIp = agentIp;
         this.cpuCores = cpuCores;
         this.memorySize = memorySize;

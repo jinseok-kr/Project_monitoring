@@ -4,7 +4,7 @@ import com.multi.core.dto.AgentInfoDTO;
 
 public interface MonitorService {
     int getCpuCores();
-    long getMemorySize();
+    double getMemorySize();
     String getOsInfo();
 
     AgentInfoDTO getRegistInfo();
