@@ -1,4 +1,4 @@
-package com.multi.exception;
+package com.multi.monitor.exception;
 
 public class NoPortException extends RuntimeException {
     public NoPortException() {

@@ -1,6 +1,6 @@
 package com.multi.server.agent.service;
 
-import com.multi.dto.AgentInfoDTO;
+import com.multi.core.dto.AgentInfoDTO;
 import com.multi.server.agent.dto.AgentDTO;
 import com.multi.server.agent.dto.AgentsSearchDTO;
 

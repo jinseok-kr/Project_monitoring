@@ -45,7 +45,7 @@ public class CustomAgentRepositoryImpl implements CustomAgentRepository {
         return cpuCores == null ? null : agent.cpuCores.eq(cpuCores);
     }
 
-    private BooleanExpression eqMemorySize(Long memorySize) {
+    private BooleanExpression eqMemorySize(Double memorySize) {
         return memorySize == null ? null : agent.memorySize.eq(memorySize);
     }
 

@@ -3,13 +3,10 @@ package com.multi.server.agent.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Builder
 @Getter
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "agent")
 public class Agent {
     @Id
@@ -20,13 +17,13 @@ public class Agent {
     private Integer cpuCores;
 
     @Column(name = "memory_size")
-    private Long memorySize;
+    private Double memorySize;
 
     @Column(name = "os_info")
     private String osInfo;
 
     @Builder
-    public Agent(String agentIp, Integer cpuCores, Long memorySize, String osInfo) {
+    public Agent(String agentIp, Integer cpuCores, Double memorySize, String osInfo) {
         this.agentIp = agentIp;
         this.cpuCores = cpuCores;
         this.memorySize = memorySize;

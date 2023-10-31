@@ -5,7 +5,7 @@ import com.multi.server.agent.dto.AgentDTO;
 import com.multi.server.agent.dto.AgentIpDTO;
 import com.multi.server.agent.dto.AgentsSearchDTO;
 import com.multi.server.agent.service.AgentService;
-import com.multi.dto.AgentInfoDTO;
+import com.multi.core.dto.AgentInfoDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
