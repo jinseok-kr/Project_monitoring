@@ -1,10 +1,14 @@
 package com.multi.server.agent.service;
 
+import com.multi.core.dto.AgentMetricDTO;
 import com.multi.server.agent.config.ConfigProperties;
 import com.multi.server.agent.dto.AgentDTO;
+import com.multi.server.agent.dto.AgentIpDTO;
+import com.multi.server.agent.dto.AgentMetricRequestDTO;
 import com.multi.server.agent.dto.AgentsSearchDTO;
 import com.multi.server.agent.entity.Agent;
 import com.multi.server.agent.exception.AgentRegistFailException;
+import com.multi.server.agent.exception.GetAgentMetricFailException;
 import com.multi.server.agent.exception.URLCreateFailException;
 import com.multi.server.agent.repository.AgentRepository;
 import com.multi.core.dto.AgentInfoDTO;
@@ -43,11 +47,11 @@ public class AgentServiceImpl implements AgentService {
 
     //에이전트 등록 요청
     @Override
-    public AgentInfoDTO callAgent(String agentIp) {
+    public AgentInfoDTO callAgent(AgentIpDTO agentIpDTO) {
         AgentInfoDTO result = null;
         try {
             XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
-            config.setServerURL(new URL(String.format("http://%s:%d/xmlrpc",agentIp, configProperties.getPort())));
+            config.setServerURL(new URL(String.format("http://%s:%d/xmlrpc",agentIpDTO.agentIp(), configProperties.getPort())));
             config.setEnabledForExtensions(true);
             config.setConnectionTimeout(60 * 1000);
             config.setReplyTimeout(60 * 1000);
@@ -80,5 +84,38 @@ public class AgentServiceImpl implements AgentService {
     public List<AgentDTO> getAgentsList(AgentsSearchDTO agentsSearchDTO) {
         log.info("에이전트 목록 검색");
         return agentRepository.findAgentsByFilter(agentsSearchDTO);
+    }
+
+    @Override
+    public AgentMetricDTO getAgentMetric(AgentMetricRequestDTO agentMetricRequestDTO) {
+        AgentMetricDTO result = null;
+        try {
+            XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
+            config.setServerURL(new URL(String.format("http://%s:%d/xmlrpc",agentMetricRequestDTO.agentIp(), configProperties.getPort())));
+            config.setEnabledForExtensions(true);
+            config.setConnectionTimeout(60 * 1000);
+            config.setReplyTimeout(60 * 1000);
+
+            XmlRpcClient client = new XmlRpcClient();
+            // use Commons HttpClient as transport
+            client.setTransportFactory(new XmlRpcCommonsTransportFactory(client));
+            // set configuration
+            client.setConfig(config);
+            ClientFactory factory = new ClientFactory(client);
+            MonitorService monitorService = (MonitorService) factory.newInstance(MonitorService.class);
+            result = monitorService.getAgentMetric();
+            if (result == null) {
+                log.error("에이전트 메트릭 정보 가져오기 실패");
+                throw new GetAgentMetricFailException();
+            }
+        } catch (MalformedURLException e) {
+            log.warn("URL 생성 실패");
+            throw new URLCreateFailException();
+        } catch (UndeclaredThrowableException e) {
+            log.warn("에이전트 메트릭 정보 가져오기 실패");
+            throw new GetAgentMetricFailException();
+        }
+        log.info("에이전트 메트릭 정보 가져오기 성공");
+        return result;
     }
 }

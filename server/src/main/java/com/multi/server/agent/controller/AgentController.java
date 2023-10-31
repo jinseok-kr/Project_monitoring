@@ -1,8 +1,10 @@
 package com.multi.server.agent.controller;
 
 
+import com.multi.core.dto.AgentMetricDTO;
 import com.multi.server.agent.dto.AgentDTO;
 import com.multi.server.agent.dto.AgentIpDTO;
+import com.multi.server.agent.dto.AgentMetricRequestDTO;
 import com.multi.server.agent.dto.AgentsSearchDTO;
 import com.multi.server.agent.service.AgentService;
 import com.multi.core.dto.AgentInfoDTO;
@@ -20,7 +22,7 @@ public class AgentController {
 
     @PostMapping("/regist")
     public ResponseEntity registRequest(@RequestBody AgentIpDTO agentIpDTO) { //ip를 받아서 에이전트 서버에 등록요청
-        AgentInfoDTO agentInfo = agentService.callAgent(agentIpDTO.agentIp());
+        AgentInfoDTO agentInfo = agentService.callAgent(agentIpDTO);
         AgentDTO dto = AgentDTO.builder()
                 .agentIp(agentIpDTO.agentIp())
                 .cpuCores(agentInfo.cpuCores())
@@ -35,5 +37,11 @@ public class AgentController {
     public ResponseEntity<List<AgentDTO>> searchAgents(@ModelAttribute AgentsSearchDTO agentsSearchDTO) {
         List<AgentDTO> agents = agentService.getAgentsList(agentsSearchDTO);
         return ResponseEntity.ok(agents);
+    }
+
+    @PostMapping("/metric")
+    public ResponseEntity showMetric(@RequestBody AgentMetricRequestDTO agentMetricRequestDTO) {
+        AgentMetricDTO dto = agentService.getAgentMetric(agentMetricRequestDTO);
+        return ResponseEntity.ok(dto);
     }
 }
