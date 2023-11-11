@@ -12,18 +12,18 @@ import lombok.NoArgsConstructor;
 public class Metric {
     @Id
     @Column(name = "agent_id")
-    Long id;
+    private Long id;
 
     @Column(name = "cpu_load")
-    Double cpuLoad;
+    private Double cpuLoad;
 
     @Column(name = "memory_load")
-    Double memoryLoad;
+    private Double memoryLoad;
 
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     @JoinColumn(name = "agent_id")
-    Agent agent;
+    private Agent agent;
 
     @Builder
     public Metric(Double cpuLoad, Double memoryLoad, Agent agent) {
