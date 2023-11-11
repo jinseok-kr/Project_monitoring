@@ -5,7 +5,9 @@ import com.multi.server.agent.config.ConfigProperties;
 import com.multi.server.agent.dto.AgentDTO;
 import com.multi.server.agent.dto.AgentIpDTO;
 import com.multi.server.agent.dto.AgentsSearchDTO;
+import com.multi.server.agent.dto.RegistMetricRequest;
 import com.multi.server.agent.entity.Agent;
+import com.multi.server.agent.entity.Metric;
 import com.multi.server.agent.exception.AgentRegistFailException;
 import com.multi.server.agent.exception.GetAgentMetricFailException;
 import com.multi.server.agent.exception.NoAgentException;
@@ -13,6 +15,7 @@ import com.multi.server.agent.exception.URLCreateFailException;
 import com.multi.server.agent.repository.AgentRepository;
 import com.multi.core.dto.AgentInfoDTO;
 import com.multi.core.service.MonitorService;
+import com.multi.server.agent.repository.MetricRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.xmlrpc.client.XmlRpcClient;
@@ -20,7 +23,9 @@ import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 import org.apache.xmlrpc.client.XmlRpcCommonsTransportFactory;
 import org.apache.xmlrpc.client.util.ClientFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.UndeclaredThrowableException;
 import java.net.MalformedURLException;
@@ -36,9 +41,11 @@ public class AgentServiceImpl implements AgentService {
 
     private final ConfigProperties configProperties;
     private final AgentRepository agentRepository;
+    private final MetricRepository metricRepository;
 
     //에이전트 DB 등록
     @Override
+    @Transactional
     public void registAgent(AgentDTO agentDTO) {
         Agent agent = agentDTO.toEntity();
         agent = agentRepository.save(agent);
@@ -81,11 +88,13 @@ public class AgentServiceImpl implements AgentService {
 
     //에이전트 목록 조회
     @Override
+    @Transactional
     public List<AgentDTO> getAgentsList(AgentsSearchDTO agentsSearchDTO) {
         log.info("에이전트 목록 검색");
         return agentRepository.findAgentsByFilter(agentsSearchDTO);
     }
 
+    //에이전트 메트릭 정보 요청
     @Override
     public AgentMetricDTO getAgentMetric(Long id) {
         AgentMetricDTO result = null;
@@ -121,7 +130,47 @@ public class AgentServiceImpl implements AgentService {
     }
 
     @Override
+    @Transactional
     public Optional<Agent> findByAgentIp(String agentIp) {
         return agentRepository.findByAgentIp(agentIp);
+    }
+
+    @Override
+    @Transactional
+    public Optional<Agent> findByAgentId(Long id) {
+        return agentRepository.findById(id);
+    }
+
+    //에이전트 메트릭 정보 DB 저장
+    @Override
+    @Transactional
+    public void registMetric(RegistMetricRequest registMetricRequest) {
+        Metric metric = metricRepository.findById(registMetricRequest.id()).orElse(
+                Metric.builder()
+                        .cpuLoad(registMetricRequest.cpuLoad())
+                        .memoryLoad(registMetricRequest.memoryLoad())
+                        .agent(agentRepository.findById(registMetricRequest.id()).orElseThrow(NoAgentException::new))
+                        .build()
+        );
+        metric.updateMetric(registMetricRequest.cpuLoad(), registMetricRequest.memoryLoad());
+        metricRepository.save(metric);
+        log.info("메트릭 정보 저장");
+    }
+
+    @Scheduled(cron = "0/10 * * * * *", zone = "Asia/Seoul")
+    @Transactional
+    public void scheduledRegistMetric() {
+        log.info("스케쥴러 호출");
+        List<Agent> agentList = agentRepository.findAll();
+        for (Agent agent : agentList) {
+            log.info(agent.getId() + "번 agent 호출");
+            AgentMetricDTO agentMetric = this.getAgentMetric(agent.getId());
+            RegistMetricRequest dto = RegistMetricRequest.builder()
+                    .id(agent.getId())
+                    .cpuLoad(agentMetric.cpuLoad())
+                    .memoryLoad(agentMetric.memoryLoad())
+                    .build();
+            this.registMetric(dto);
+        }
     }
 }

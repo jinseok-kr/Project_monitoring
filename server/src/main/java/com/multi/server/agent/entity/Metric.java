@@ -11,9 +11,8 @@ import lombok.NoArgsConstructor;
 @Entity(name = "metric")
 public class Metric {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "metric_id")
-    Long metricId;
+    @Column(name = "agent_id")
+    Long id;
 
     @Column(name = "cpu_load")
     Double cpuLoad;
@@ -21,8 +20,9 @@ public class Metric {
     @Column(name = "memory_load")
     Double memoryLoad;
 
-    @ManyToOne
-    @JoinColumn(name = "id")
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
+    @JoinColumn(name = "agent_id")
     Agent agent;
 
     @Builder
@@ -30,5 +30,10 @@ public class Metric {
         this.cpuLoad = cpuLoad;
         this.memoryLoad = memoryLoad;
         this.agent = agent;
+    }
+
+    public void updateMetric(Double cpuLoad, Double memoryLoad) {
+        this.cpuLoad = cpuLoad;
+        this.memoryLoad = memoryLoad;
     }
 }

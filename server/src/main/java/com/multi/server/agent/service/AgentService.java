@@ -5,6 +5,7 @@ import com.multi.core.dto.AgentMetricDTO;
 import com.multi.server.agent.dto.AgentDTO;
 import com.multi.server.agent.dto.AgentIpDTO;
 import com.multi.server.agent.dto.AgentsSearchDTO;
+import com.multi.server.agent.dto.RegistMetricRequest;
 import com.multi.server.agent.entity.Agent;
 
 import java.util.List;
@@ -20,4 +21,8 @@ public interface AgentService {
     List<AgentDTO> getAgentsList(AgentsSearchDTO agentsSearchDTO);
 
     AgentMetricDTO getAgentMetric(Long id);
+
+    void registMetric(RegistMetricRequest registMetricRequest);
+
+    Optional<Agent> findByAgentId(Long id);
 }

@@ -5,6 +5,7 @@ import com.multi.core.dto.AgentMetricDTO;
 import com.multi.server.agent.dto.AgentDTO;
 import com.multi.server.agent.dto.AgentIpDTO;
 import com.multi.server.agent.dto.AgentsSearchDTO;
+import com.multi.server.agent.dto.RegistMetricRequest;
 import com.multi.server.agent.service.AgentService;
 import com.multi.core.dto.AgentInfoDTO;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +45,14 @@ public class AgentController {
 
     @GetMapping("/metric/{id}")
     public ResponseEntity showMetric(@PathVariable("id") Long id) {
-        AgentMetricDTO dto = agentService.getAgentMetric(id);
-        return ResponseEntity.ok(dto);
+        AgentMetricDTO agentMetric = agentService.getAgentMetric(id);
+        RegistMetricRequest dto = RegistMetricRequest.builder()
+                .id(id)
+                .cpuLoad(agentMetric.cpuLoad())
+                .memoryLoad(agentMetric.memoryLoad())
+                .build();
+        agentService.registMetric(dto);
+
+        return ResponseEntity.ok(agentMetric);
     }
 }
