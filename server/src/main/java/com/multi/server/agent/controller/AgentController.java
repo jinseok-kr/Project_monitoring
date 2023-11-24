@@ -47,7 +47,7 @@ public class AgentController {
     public ResponseEntity showMetric(@PathVariable("id") Long id) {
         AgentMetricDTO agentMetric = agentService.getAgentMetric(id);
         RegistMetricRequest dto = RegistMetricRequest.builder()
-                .id(id)
+                .agentId(id)
                 .cpuLoad(agentMetric.cpuLoad())
                 .memoryLoad(agentMetric.memoryLoad())
                 .build();

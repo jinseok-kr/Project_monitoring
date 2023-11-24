@@ -88,7 +88,7 @@ public class AgentServiceImpl implements AgentService {
 
     //에이전트 목록 조회
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<AgentDTO> getAgentsList(AgentsSearchDTO agentsSearchDTO) {
         log.info("에이전트 목록 검색");
         return agentRepository.findAgentsByFilter(agentsSearchDTO);
@@ -130,13 +130,13 @@ public class AgentServiceImpl implements AgentService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public Optional<Agent> findByAgentIp(String agentIp) {
         return agentRepository.findByAgentIp(agentIp);
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public Optional<Agent> findByAgentId(Long id) {
         return agentRepository.findById(id);
     }
@@ -145,15 +145,14 @@ public class AgentServiceImpl implements AgentService {
     @Override
     @Transactional
     public void registMetric(RegistMetricRequest registMetricRequest) {
-        Metric metric = metricRepository.findById(registMetricRequest.id()).orElse(
+        Agent agent = agentRepository.findById(registMetricRequest.agentId()).orElseThrow(NoAgentException::new);
+        agent.addMetric(
                 Metric.builder()
+                        .agent(agent)
                         .cpuLoad(registMetricRequest.cpuLoad())
                         .memoryLoad(registMetricRequest.memoryLoad())
-                        .agent(agentRepository.findById(registMetricRequest.id()).orElseThrow(NoAgentException::new))
                         .build()
         );
-        metric.updateMetric(registMetricRequest.cpuLoad(), registMetricRequest.memoryLoad());
-        metricRepository.save(metric);
         log.info("메트릭 정보 저장");
     }
 
@@ -166,7 +165,7 @@ public class AgentServiceImpl implements AgentService {
             log.info(agent.getId() + "번 agent 호출");
             AgentMetricDTO agentMetric = this.getAgentMetric(agent.getId());
             RegistMetricRequest dto = RegistMetricRequest.builder()
-                    .id(agent.getId())
+                    .agentId(agent.getId())
                     .cpuLoad(agentMetric.cpuLoad())
                     .memoryLoad(agentMetric.memoryLoad())
                     .build();
